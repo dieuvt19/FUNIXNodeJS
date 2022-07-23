@@ -19,5 +19,8 @@
   "homepage": "https://github.com/dieuvt19/FUNIXNodeJS#readme",
   "devDependencies": {
     "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
   }
 }
