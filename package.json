@@ -1,0 +1,23 @@
+{
+  "name": "node-first-app",
+  "version": "1.0.0",
+  "description": "Complete Node.js Guide",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dieuvt19/FUNIXNodeJS.git"
+  },
+  "author": "Dieu Dieu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dieuvt19/FUNIXNodeJS/issues"
+  },
+  "homepage": "https://github.com/dieuvt19/FUNIXNodeJS#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
