@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const errorController = require("./controllers/error");
-const User = require("./models/user");
+// const User = require("./models/user");
 
 const app = express();
 
@@ -34,7 +34,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    "mongodb+srv://test:test@funixnjs101xcluster.pkxyk.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://test:test@funixnjs101xcluster.pkxyk.mongodb.net/shop?retryWrites=true&w=majority"
   )
   .then((result) => {
     app.listen(3000);
