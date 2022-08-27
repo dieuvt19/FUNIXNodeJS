@@ -310,7 +310,7 @@ exports.postSearchSalary = (req, res, next) => {
             .then((anls) => {
               console.log(anls);
 
-              // total working time
+              // total AnnualLeave
               let totalAnnualLeave = 0;
               anls.forEach((anl) => {
                 if (anl.typeLeave === "Theo ngày") {
