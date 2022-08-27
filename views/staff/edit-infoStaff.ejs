@@ -1,0 +1,48 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <h3 class="text-center">CHỈNH SỬA THÔNG TIN CÁ NHÂN</h3>
+        <form class="staff-form" action="/edit-infoStaff" method="POST">
+             <div class="form-control">
+                <label for="userId">Id</label>
+                <input type="text" name="userId" value="<%= user._id %>" id="userId" readonly class="input-readonly">
+            </div>
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" value="<%= user.name %>" id="name" readonly class="input-readonly">
+            </div>
+            <div class="form-control">
+                <label for="doB">DoB</label>
+                <input type="text" name="doB" value="<%= moment(user.doB).format('DD/MM/YYYY') 
+                %>" id="doB"  readonly class="input-readonly">
+            </div>
+             <div class="form-control">
+                <label for="<%= user.salaryScale %>">SalaryScale</label>
+                <input type="number" name="salaryScale" value='1' id="salaryScale" readonly class="input-readonly">
+            </div>
+            <div class="form-control">
+                <label for="startDate">StartDate</label>
+                <input type="text" name="startDate" value="<%= moment(user.startDate).format('DD/MM/YYYY') %>" id="startDate" readonly class="input-readonly">
+            </div>
+            <div class="form-control">
+                <label for="department">Department</label>
+                <input type="text" name="department" value='<%= user.department %>' id="department" readonly class="input-readonly">
+            </div>
+             <div class="form-control">
+                <label for="annualLeave">AnnualLeave</label>
+                <input type="number" name="annualLeave" value='<%= user.annualLeave %>' id="annualLeave" readonly class="input-readonly">
+            </div>
+            <div class="form-control">
+                <label for="image">Image</label>
+                <input type="text" name="image" value="<%= user.image %>" id="image">
+            </div>
+            <button class="btn btn-primary" type="submit">Chỉnh sửa</button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>

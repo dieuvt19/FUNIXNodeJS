@@ -1,0 +1,59 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main class="container text-center">
+        <div class="row">
+            <h4>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h4>
+        </div>
+        <div class="m-2">
+            <a href="/check-in">
+                <button class="btn btn-primary">Điểm danh</button>
+            </a>
+            <a href="/check-out">
+                <button class="btn btn-primary">Kết thúc làm</button>
+            </a>
+             <a href="/check-details">
+                <button class="btn btn-primary">Chi tiết điểm danh</button>
+            </a>
+            <a href="/annualLeave">
+                <button class="btn btn-primary">Nghỉ phép</button>
+            </a>
+        </div>
+        <div>
+            <div>
+                <h4>ĐIỂM DANH</h4>
+            </div>
+            <% if (starting) { %> 
+                <div class="row">
+                     <h5>Xin chào: <%= check.userId.name %></h5>
+                    <h5>Trạng thái: Đang làm việc</h5>
+                    <p>Nơi làm việc: <%= check.workPlace %></p>
+                    <p>Thời gian bắt đầu làm: <%= moment(check.checkin).format('DD/MM/YYYY HH:mm') %></p>
+                    <h6><%= alert %></h6>
+                </div>
+            <% } else { %>
+                <div >
+                    <h5>Xin chào: <%= user.name %></h5>
+                    <form action="/check-in" method="POST">
+                        <div>
+                            <label for="workPlace">Chọn nơi làm việc:</label>
+                            <select name="workPlace" id="workPlace">
+                                <option value="Nhà">Nhà</option>
+                                <option value="Công ty" selected>
+                                Công ty</option>
+                                <option value="Khách hàng">Khách hàng</option>
+                            </select>
+                        </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary m-2">Bắt đầu</button>
+                    </div>
+                </form>
+            </div>
+            <% } %>
+    </main>
+<%- include('../includes/end.ejs') %>

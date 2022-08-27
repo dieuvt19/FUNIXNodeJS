@@ -1,0 +1,50 @@
+<%- include('../includes/head.ejs') %>
+ <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <div class="container">
+            <div class="row text-center">
+                <h4>ĐĂNG KÝ NGHỈ PHÉP</h4>
+                <h5>Số ngày nghỉ còn lại: <%= user.annualLeave %></h5>
+           </div>
+           <% if (user.annualLeave === 0) { %>
+                <div class="row text-center">
+                    <h5>Bạn đã hết ngày nghỉ phép</h5>
+                </div>
+            <% } else { %> 
+                <div class="row text-center">
+                    <form action="/annualLeave" method="POST">
+                        <div>
+                            <p>Chọn loại nghỉ phép:</p>
+                            <select name="typeLeave" id="typeLeave">
+                                <option value="Theo ngày">Theo ngày</option>
+                                <option value="Theo giờ">Theo giờ</option>
+                            </select>
+                        </div>
+                        <div class="m-2">
+                            <label for="dateLeave">Chọn ngày nghỉ</label>
+                            <input type="date" name="dateLeave">
+                            <button class="btn btn-primary btn-add" type="button" >Thêm</button>
+                            <div id="input"></div>
+                        </div>
+                        <div>
+                            <label for="hourLeave">Chọn số giờ xin nghỉ phép</label>
+                            <input type="number" name="hourLeave" min="0" max="<%= (user.annualLeave*8 < 8) ?user.annualLeave*8 : 8 %>">
+                        </div>
+                        <div>
+                            <p>Lý do</p>
+                            <textarea name="reason" id="reason" cols="30" rows="5"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Đăng ký</button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+<%- include('../includes/end.ejs') %>

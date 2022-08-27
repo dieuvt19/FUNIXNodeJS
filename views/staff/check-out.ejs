@@ -1,0 +1,45 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main class="container text-center">
+        <div class="row">
+            <h4>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h4>
+        </div>
+        <div class="m-2">
+            <a href="/check-in">
+                <button class="btn btn-primary">Điểm danh</button>
+            </a>
+            <a href="/check-out">
+                <button class="btn btn-primary">Kết thúc làm</button>
+            </a>
+             <a href="/check-details">
+                <button class="btn btn-primary">Chi tiết điểm danh</button>
+            </a>
+            <a href="/annualLeave">
+                <button class="btn btn-primary">Nghỉ phép</button>
+            </a>
+        </div>
+        <div>
+            <div class="row">
+                <h4>KẾT THÚC LÀM</h4>
+            </div>
+            <div class="<%= (starting) ? 'hidden' : '' %>"> 
+                <h5 class="text-danger">Vui lòng điểm danh bắt đầu công việc trước!</h5>
+            </div>
+            <div class="<%= (starting) ? '' : 'hidden' %>">
+                <form action="/check-out" method="POST">
+                    <div>
+                        <input type="hidden" name="checkId" value="<%= (starting) ? check._id : '' %>">
+                        <button type="submit" class="btn btn-primary m-2">Kết thúc</button>
+                    </div>
+            </div>
+                </div>
+                
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>

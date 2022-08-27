@@ -1,0 +1,80 @@
+<%- include('../includes/head.ejs') %>
+ <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <div class="container text-center">
+            <h3>THÔNG TIN COVID CÁ NHÂN</h3>
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
+                <a href="/temp-details">
+                    <button class="btn btn-primary">Thông tin thân nhiệt</button>
+                </a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
+                <a href="/vaccine-details" >
+                   <button class="btn btn-primary">Thông tin tiêm vaccine</button>
+               </a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
+                <a href="/covid-details" >
+                   <button class="btn btn-primary">Thông tin dương tính Covid</button>
+               </a>
+            </div>
+        </div>
+        <div class="row">
+            <!-- start bodyTemp -->
+            <div class="col-lg-4 col-md-4 col-xs-12">
+                <form action="/temp-details" method="POST" >
+                    <div class="form-control">
+                        <h4>Thông tin thân nhiệt</h4>
+                        <label for="bodyTemp">Nhiệt độ cơ thể</label>
+                        <input type="Number" name="bodyTemp" id="bodyTemp" placeholder="36">
+                        <button type="submit" class="btn btn-primary">Đăng ký</button>
+                    </div>
+                </form>
+            </div>
+            <!-- end bodyTemp -->
+
+            <!-- start vaccine -->
+            <div class="col-lg-4 col-md-4 col-xs-12">
+                <form action="/vaccine-details" method="POST">
+                    <div class="form-control">
+                        <h4>Thông tin tiêm vaccine</h4>
+                        <label for="typeVac">Lần tiêm</label>
+                        <select name="typeVac" id="typeVac">
+                            <option value="Mũi 1">Mũi 1</option>
+                            <option value="Mũi 2">Mũi 2</option>
+                            <option value="Mũi 3">Mũi 3</option>
+                            <option value="Mũi 4">Mũi 4</option>
+                        </select>
+                        <label for="nameVac1">Tên vaccine</label>
+                        <input type="text" name="name" id="name" placeholder="Astra">
+                        <label for="date">Ngày tiêm</label>
+                        <input type="date" name="date" id="date">
+                        <button type="submit" class="btn btn-primary">Đăng ký</button>
+                    </div>
+                </form>
+            </div>
+            <!-- end vaccine -->
+
+            <!-- start covid-->
+            <div class="col-lg-4 col-md-4 col-xs-12">
+                <form action="/covid-details" method="POST">
+                    <div class="form-control">
+                        <h4>Thông tin dương tính Covid</h4>
+                        <label for="dateCovid">Ngày phát hiện dương tính</label>
+                        <input type="date" name="dateCovid" id="dateCovid">
+                        <button type="submit" class="btn btn-primary">Đăng ký</button>
+                    </div>
+                </form>
+            </div>
+            <!-- end covid-->
+        </div>
+    </main>
+
+<%- include('../includes/end.ejs') %>

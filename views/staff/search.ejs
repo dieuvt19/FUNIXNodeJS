@@ -1,0 +1,122 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <div class="container">
+            <h4 class="text-center">TRA CỨU THÔNG TIN</h4>
+            <div class="row justify-content-center">
+                <!-- start search salary -->
+                <div class="col">
+                    <form action="/search-salary" method="POST">
+                        <label for="salaryMonth">Chi tiết lương tháng</label>
+                        <input type="month" name="salaryMonth" id="salaryMonth">
+                        <button type="submit" class="btn btn-primary">Tìm</button>
+                    </form>
+                </div>
+                <!-- end search salary -->
+
+                <!-- start search check in, check out by date -->
+                <div class="col">
+                    <form action="/search-date" method="POST">
+                        <label for="searchDate">Chi tiết điểm danh theo ngày</label>
+                        <input type="date" name="searchDate" id="searchDate">
+                        <button type="submit" class="btn btn-primary">Tìm</button>
+                    </form>
+                </div>
+                <!-- end search check in, check out by date -->
+            </div>
+
+            <!-- start check in, check out table -->
+            <div class="row">
+                <h5 class="text-center">THÔNG TIN ĐIỂM DANH</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Nơi làm việc</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Thời gian làm việc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let check of user.checks) { %>
+                        <tr>
+                            <td><%= moment(check.checkin).format('DD/MM/YYYY') %></td>
+                            <td><%= check.workPlace %></td>
+                            <td><%= moment(check.checkin).format('HH:mm') %></td>
+                            <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
+                            <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <!-- end check in, check out table -->
+
+            <!-- start annualLeave table -->
+            <div class="row">
+                <h5 class="text-center">THÔNG TIN NGHỈ PHÉP</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Loại nghỉ phép</th>
+                            <th>Số giờ nghỉ phép</th>
+                            <th>Lý do</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let anl of user.annualLeaves) { %>
+                            <tr>
+                                <td><%= anl.dateLeave.join() %></td>
+                                <td><%= anl.typeLeave %></td>
+                                <% if (anl.hourLeave) { %>
+                                    <td><%= anl.hourLeave %></td>
+                                <% } else { %>
+                                    <td><%= (anl.dateLeave.length > 0) ? (anl.dateLeave.length * 8) : 8 %></td>
+                                <% } %>
+                                <td><%= anl.reason %></td>    
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <!-- end annualLeave table -->
+
+            <!-- start timeWork information table -->
+            <div class="row">
+                <h5 class="text-center">THÔNG TIN GIỜ LÀM</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Số giờ đã làm</th>
+                            <th>Số giờ làm thiếu</th>
+                            <th>Số giờ tăng ca</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let dt of data) { %>
+                        <tr>
+                            <td><%= moment(dt._id).format('DD/MM/YYYY') %></td>
+                            <td><%= dt.sumHour.toFixed(2) %></td>
+                           
+                            <td><%= (8 - dt.sumHour).toFixed(2) %></td>
+                          
+                            <td><%= (dt.sumHour > 8) ? (dt.sumHour - 8) : 0 %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <!-- end timeWork information table -->
+
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>

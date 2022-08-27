@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/staff.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <div class="container">
+            <h4 class="text-center">TRA CỨU THÔNG TIN</h4>
+            <div class="text-center">
+                <!-- start search check in, check out by date -->
+                <div class="col">
+                    <form action="/search-date" method="POST">
+                        <label for="searchDate">Chi tiết điểm danh theo ngày</label>
+                        <input type="date" name="searchDate" id="searchDate">
+                        <button type="submit" class="btn btn-primary">Tìm</button>
+                    </form>
+                </div>
+                <!-- end search check in, check out by date -->
+            </div>
+
+            <!-- start check in, check out table -->
+            <div class="row">
+                <h5 class="text-center">THÔNG TIN ĐIỂM DANH NGÀY <%= moment(searchDate).format('DD/MM/YYYY') %></h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nơi làm việc</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Thời gian làm việc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let check of checks) { %>
+                        <tr>
+                            <td><%= check.workPlace %></td>
+                            <td><%= moment(check.checkin).format('HH:mm') %></td>
+                            <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
+                            <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
+                        </tr>
+                        <% } %>
+                         <tr>
+                            <th colspan="5">Số giờ đã làm: <%= (isCheckout.length > 0) ? '--' : total.toFixed(2) %> giờ</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- end check in, check out table -->
+
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>
