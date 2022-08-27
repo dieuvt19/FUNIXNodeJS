@@ -41,8 +41,6 @@ router.get("/search-salary", staffController.getSearch);
 
 router.post("/search-date", staffController.postSearchDate);
 
-// router.get("/search-date", staffController.getSearchDate);
-
 // Covid
 router.get("/covid", staffController.getInfoCovid);
 
