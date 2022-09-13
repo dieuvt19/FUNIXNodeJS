@@ -109,6 +109,13 @@ form {
   padding: 0;
 }
 
+.mobile-nav__item button {
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: black;
+}
+
 .mobile-nav__item a {
   text-decoration: none;
   color: black;
