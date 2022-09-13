@@ -6,25 +6,10 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
 
-    <main>
+    <main class="container">
         <div class="container text-center">
             <h3>THÔNG TIN COVID CÁ NHÂN</h3>
-        <div class="row">
-            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
-                <a href="/temp-details">
-                    <button class="btn btn-primary">Thông tin thân nhiệt</button>
-                </a>
-            </div>
-            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
-                <a href="/vaccine-details" >
-                   <button class="btn btn-primary">Thông tin tiêm vaccine</button>
-               </a>
-            </div>
-            <div class="col-lg-4 col-md-4 col-xs-12 p-1">
-                <a href="/covid-details" >
-                   <button class="btn btn-primary">Thông tin dương tính Covid</button>
-               </a>
-            </div>
+            <hr>
         </div>
         <div class="row">
             <!-- start bodyTemp -->
@@ -32,11 +17,13 @@
                 <form action="/temp-details" method="POST" >
                     <div class="form-control">
                         <h4>Thông tin thân nhiệt</h4>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <label for="bodyTemp">Nhiệt độ cơ thể</label>
                         <input type="Number" name="bodyTemp" id="bodyTemp" placeholder="36">
                         <button type="submit" class="btn btn-primary">Đăng ký</button>
                     </div>
                 </form>
+                <h5 class="text-success"><%= confirmTemp %></h5>
             </div>
             <!-- end bodyTemp -->
 
@@ -45,6 +32,7 @@
                 <form action="/vaccine-details" method="POST">
                     <div class="form-control">
                         <h4>Thông tin tiêm vaccine</h4>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <label for="typeVac">Lần tiêm</label>
                         <select name="typeVac" id="typeVac">
                             <option value="Mũi 1">Mũi 1</option>
@@ -59,6 +47,7 @@
                         <button type="submit" class="btn btn-primary">Đăng ký</button>
                     </div>
                 </form>
+                <h5 class="text-success"><%= confirmVaccine %></h5>
             </div>
             <!-- end vaccine -->
 
@@ -67,11 +56,13 @@
                 <form action="/covid-details" method="POST">
                     <div class="form-control">
                         <h4>Thông tin dương tính Covid</h4>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <label for="dateCovid">Ngày phát hiện dương tính</label>
                         <input type="date" name="dateCovid" id="dateCovid">
                         <button type="submit" class="btn btn-primary">Đăng ký</button>
                     </div>
                 </form>
+                <h5 class="text-success"><%= confirmCovid %></h5>
             </div>
             <!-- end covid-->
         </div>

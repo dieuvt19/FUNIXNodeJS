@@ -1,0 +1,61 @@
+<div class="backdrop"></div>
+<header class="main-header">
+  <button id="side-menu-toggle">Menu</button>
+  <nav class="main-header__nav">
+    <ul class="main-header__item-list">
+      <li class="main-header__item">
+        <a class="<%= path === '/' ? 'active' : '' %>" href="/">Trang chủ</a>
+      </li>
+      <li class="main-header__item">
+        <a
+          class="<%= path === '/confirm-checks' ? 'active' : '' %>"
+          href="/confirm-checks"
+          >Xác nhận giờ làm</a
+        >
+      </li>
+      <li class="main-header__item">
+        <a
+          class="<%= path === '/manaCovid' ? 'active' : '' %>"
+          href="/manaCovid"
+          >Thông tin Covid</a
+        >
+      </li>
+    </ul>
+    <ul class="main-header__item-list">
+      <li class="main-header__item">
+        <form action="/logout" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button type="submit">Logout</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<nav class="mobile-nav">
+  <ul class="mobile-nav__item-list">
+    <li class="main-header__item">
+      <a class="<%= path === '/' ? 'active' : '' %>" href="/">Trang chủ</a>
+    </li>
+    <li class="main-header__item">
+      <a
+        class="<%= path === '/confirm-checks' ? 'active' : '' %>"
+        href="/confirm-checks"
+        >Xác nhận giờ làm</a
+      >
+    </li>
+    <li class="main-header__item">
+      <a class="<%= path === '/manaCovid' ? 'active' : '' %>" href="/manaCovid"
+        >Thông tin Covid</a
+      >
+    </li>
+  </ul>
+  <ul class="main-header__item-list">
+    <li class="main-header__item">
+      <form action="/logout" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit">Logout</button>
+      </form>
+    </li>
+  </ul>
+</nav>

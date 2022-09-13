@@ -8,7 +8,8 @@
 
     <main class="container text-center">
         <div class="row">
-            <h4>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h4>
+            <h3>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h3>
+            <hr>
         </div>
         <div class="m-2">
             <a href="/check-in" class="btn btn-primary">Điểm danh</a>
@@ -23,18 +24,21 @@
             <div class="row">
                 <h4>KẾT THÚC LÀM</h4>
             </div>
-            <div class="<%= (starting) ? 'hidden' : '' %>"> 
-                <h5 class="text-danger">Vui lòng điểm danh bắt đầu công việc trước!</h5>
-            </div>
-            <div class="<%= (starting) ? '' : 'hidden' %>">
-                <form action="/check-out" method="POST">
-                    <div>
-                        <input type="hidden" name="checkId" value="<%= (starting) ? check._id : '' %>">
-                        <button type="submit" class="btn btn-primary m-2">Kết thúc</button>
-                    </div>
-            </div>
+            <% if (checks.length > 0) { %>
+                <div class="row">
+                    <form action="/check-out" method="POST">
+                        <div>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                            <input type="hidden" name="checkId" value="<%= checks[0]._id %>">
+                            <button type="submit" class="btn btn-primary m-2">Kết thúc</button>
+                        </div>
+                    </form>
                 </div>
-                
+            <% } else { %>
+                <div class="row"> 
+                    <h5 class="text-danger">Vui lòng điểm danh bắt đầu công việc trước!</h5>
+                </div>
+            <% } %>
         </div>
     </main>
 <%- include('../includes/end.ejs') %>

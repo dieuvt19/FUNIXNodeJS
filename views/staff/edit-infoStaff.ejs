@@ -7,8 +7,14 @@
    <%- include('../includes/navigation.ejs') %>
 
     <main>
-        <h3 class="text-center">CHỈNH SỬA THÔNG TIN CÁ NHÂN</h3>
-        <form class="staff-form" action="/edit-infoStaff" method="POST">
+        <div class="container">
+            <h3 class="text-center">CHỈNH SỬA THÔNG TIN CÁ NHÂN</h3>
+            <hr>
+        </div>
+         <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
+        <form class="staff-form" action="/edit-infoStaff" method="POST" enctype="multipart/form-data">
              <div class="form-control">
                 <label for="userId">Id</label>
                 <input type="text" name="userId" value="<%= user._id %>" id="userId" readonly class="input-readonly">
@@ -40,8 +46,9 @@
             </div>
             <div class="form-control">
                 <label for="image">Image</label>
-                <input type="text" name="image" value="<%= user.image %>" id="image">
+                <input type="file" name="image" id="image">
             </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <button class="btn btn-primary" type="submit">Chỉnh sửa</button>
         </form>
     </main>

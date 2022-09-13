@@ -5,55 +5,57 @@ const express = require("express");
 const staffController = require("../controllers/staff");
 const { randomBytes } = require("crypto");
 
+const isAuth = require("../middleware/is-auth");
+
 const router = express.Router();
 
+router.get("/", isAuth, staffController.getIndex);
+
 // Route roll-call
-router.get("/", staffController.getRollCall);
+router.get("/roll-call", isAuth, staffController.getRollCall);
 
-router.get("/check-in", staffController.getCheckIn);
+router.get("/check-in", isAuth, staffController.getCheckIn);
 
-router.post("/check-in", staffController.postCheckIn);
+router.post("/check-in", isAuth, staffController.postCheckIn);
 
-router.get("/check-out", staffController.getCheckOut);
+router.get("/check-out", isAuth, staffController.getCheckOut);
 
-router.post("/check-out", staffController.postCheckOut);
+router.post("/check-out", isAuth, staffController.postCheckOut);
 
-router.get("/check-details", staffController.getCheckDetails);
+router.get("/check-details", isAuth, staffController.getCheckDetails);
 
-router.get("/annualLeave", staffController.getAnnualLeave);
+router.get("/annualLeave", isAuth, staffController.getAnnualLeave);
 
-router.post("/annualLeave", staffController.postAnnualLeave);
+router.post("/annualLeave", isAuth, staffController.postAnnualLeave);
 
 // Route read/edit info-staff
-router.get("/infoStaff", staffController.getInfoStaff);
+router.get("/infoStaff", isAuth, staffController.getInfoStaff);
 
-router.get("/edit-infoStaff/:staffId", staffController.getEditInfoStaff);
+router.get(
+  "/edit-infoStaff/:staffId",
+  isAuth,
+  staffController.getEditInfoStaff
+);
 
-router.post("/edit-infoStaff", staffController.postEditInfoStaff);
+router.post("/edit-infoStaff", isAuth, staffController.postEditInfoStaff);
 
 // Route search
 
-router.get("/search", staffController.getSearch);
+router.get("/search", isAuth, staffController.getSearch);
 
-router.post("/search-salary", staffController.postSearchSalary);
+router.post("/search", isAuth, staffController.postSearch);
 
-router.get("/search-salary", staffController.getSearch);
+router.post("/search-salary", isAuth, staffController.postSearchSalary);
 
-router.post("/search-date", staffController.postSearchDate);
+router.post("/search-date", isAuth, staffController.postSearchDate);
 
 // Covid
-router.get("/covid", staffController.getInfoCovid);
+router.get("/covid", isAuth, staffController.getInfoCovid);
 
-router.post("/temp-details", staffController.postTemp);
+router.post("/temp-details", isAuth, staffController.postTemp);
 
-router.get("/temp-details", staffController.getTemp);
+router.post("/vaccine-details", isAuth, staffController.postVaccine);
 
-router.post("/vaccine-details", staffController.postVaccine);
-
-router.get("/vaccine-details", staffController.getVaccine);
-
-router.post("/covid-details", staffController.postCovid);
-
-router.get("/covid-details", staffController.getCovid);
+router.post("/covid-details", isAuth, staffController.postCovid);
 
 module.exports = router;

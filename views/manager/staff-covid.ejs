@@ -1,0 +1,93 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+   <%- include('../includes/navigationMana.ejs') %>
+
+    <main class="container">
+        <div class="row text-center">
+            <h3>THÔNG TIN COVID NHÂN VIÊN <%= user.name.toUpperCase() %></h3>
+             <a href="/staff-covid/<%= user._id %>">Tải file PDF</a>
+            <hr>
+        </div>
+        <div class="row">
+            <h4 class="row justify-content-center">THÔNG TIN THÂN NHIỆT</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Ngày giờ đăng ký</th>
+                        <th>Nhiệt độ cơ thể</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (temps.length > 0) { %>
+                        <% for (let temp of temps) { %>
+                            <tr>
+                                <td><%= moment(temp.timeBodyTemp).format('DD/MM/YYYY HH:mm') %></td>
+                                <td><%= temp.bodyTemp %>°C</td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="2">Chưa đăng ký thân nhiệt</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <h4 class="row justify-content-center">THÔNG TIN TIÊM VACCINE</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Lần tiêm</th>
+                        <th>Tên vaccine</th>
+                        <th>Ngày tiêm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (vacs.length > 0) { %>
+                        <% for (let vac of vacs) { %>
+                            <tr>
+                                <td><%= vac.type %></td>
+                                <td><%= vac.name %></td>
+                                <td><%= moment(vac.date).format('DD/MM/YYYY') %></td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3">Chưa đăng ký thông tin tiêm vaccine</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row text-center">
+            <h4 class="row justify-content-center">THÔNG TIN DƯƠNG TÍNH COVID</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Ngày phát hiện</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (covids.length > 0) { %>
+                        <% for (let covid of covids) { %>
+                            <tr>
+                                <td><%= moment(covid.dateCovid).format('DD/MM/YYYY') %></td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td>Chưa dương tính Covid</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>

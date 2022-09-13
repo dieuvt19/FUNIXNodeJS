@@ -14,6 +14,7 @@
                 <form action="/search-salary" method="POST">
                     <label for="salaryMonth">Chi tiết lương tháng</label>
                     <input type="month" name="salaryMonth" id="salaryMonth">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <button type="submit" class="btn btn-primary">Tìm</button>
                 </form>
             </div>
@@ -26,7 +27,6 @@
                     <thead>
                         <tr>
                             <th>Hệ số lương</th>
-                            <th>Số giờ làm</th>
                             <th>Số giờ tăng ca</th>
                             <th>Số giờ làm thiếu</th>
                             <th>Lương thực lãnh</th>
@@ -35,9 +35,8 @@
                     <tbody>
                         <tr>
                             <td><%= user.salaryScale %></td>
-                            <td><%= totalTimeWork ? totalTimeWork.toFixed(2) : '--' %></td>
-                            <td><%= overTime %></td>
-                            <td><%= missingHours %></td>
+                            <td><%= totalOverTime.toFixed(2) %></td>
+                            <td><%= totalMissingTime %></td>
                             <td><%= salary.toLocaleString('vi-VN', {style: 'currency',currency: 'VND'}) %></td>
                         </tr>
                     </tbody>

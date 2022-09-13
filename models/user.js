@@ -3,34 +3,93 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  username: {
+    type: String,
+  },
+  password: {
+    type: String,
+  },
   name: {
     type: String,
-    required: true,
   },
   doB: {
     type: Date,
-    required: true,
   },
   salaryScale: {
     type: Number,
-    required: true,
   },
   startDate: {
     type: Date,
-    required: true,
   },
   department: {
     type: String,
-    required: true,
   },
   annualLeave: {
     type: Number,
-    required: true,
   },
   image: {
     type: String,
-    required: true,
   },
+  checks: [
+    {
+      checkin: { type: Date },
+      checkout: { type: Date },
+      workPlace: { type: String },
+      date: { type: String },
+      timeWork: { type: Number },
+      starting: { type: Boolean },
+      monthOfYear: { type: String },
+    },
+  ],
+  timeWorkPerDay: [
+    {
+      date: { type: String },
+      monthOfYear: { type: String },
+      workHours: { type: Number, default: 0 },
+      leaveHours: { type: Number, default: 0 },
+      overTime: { type: Number, default: 0 },
+      missingTime: { type: Number, default: 0 },
+    },
+  ],
+  starting: { type: Boolean },
+  leaves: [
+    {
+      dateLeave: { type: String },
+      hourLeave: { type: Number, default: 0 },
+      reason: { type: String, required: true },
+      typeLeave: { type: String },
+      monthOfYear: { type: String },
+    },
+  ],
+  bodyTemps: [
+    {
+      bodyTemp: { type: Number },
+      timeBodyTemp: { type: Date },
+    },
+  ],
+  vaccines: [
+    {
+      name: { type: String },
+      type: { type: String },
+      date: { type: Date },
+    },
+  ],
+  covids: [
+    {
+      dateCovid: { type: Date },
+    },
+  ],
+  role: { type: String },
+  managerId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+  staffs: [
+    {
+      staffId: { type: Schema.Types.ObjectId, ref: "User" },
+      name: { type: String },
+    },
+  ],
 });
 
 userSchema.methods.countDateAnl = function (date) {
@@ -39,21 +98,12 @@ userSchema.methods.countDateAnl = function (date) {
   return this.save();
 };
 
-// Link with Check and AnnualLeave model
-
-userSchema.virtual("checks", {
-  ref: "Check",
-  localField: "_id",
-  foreignField: "userId",
-});
-
-userSchema.virtual("annualLeaves", {
-  ref: "AnnualLeave",
-  localField: "_id",
-  foreignField: "userId",
-});
-
-userSchema.set("toObject", { virtuals: true });
-userSchema.set("toJSON", { virtuals: true });
+userSchema.methods.deleteCheck = function (checkId) {
+  const checkIdIndex = this.checks.findIndex((item) => {
+    item._id.toString() === checkId.toString();
+  });
+  this.checks.splice(checkIdIndex, 1);
+  return this.save();
+};
 
 module.exports = mongoose.model("User", userSchema);

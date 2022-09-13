@@ -1,0 +1,28 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+   <%- include('../includes/navigationMana.ejs') %>
+
+    <main class="container">
+        <div class="row text-center">
+            <h3>THÔNG TIN COVID NHÂN VIÊN</h3>
+            <hr>
+        </div>
+        <div class="row text-center" >
+            <h4>Chọn nhân viên:</h4>
+          
+            <div>
+                <% for (let staff of user.staffs) { %>
+                    <form class="d-inline mt-2" action="/staff-covid" method="POST">
+                        <input type="hidden" name="staffId" value="<%= staff.staffId._id %>">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                        <button type="submit" class="btn btn-primary"><%= staff.name %></button>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>

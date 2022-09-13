@@ -9,12 +9,15 @@
     <main>
         <div class="container">
             <h4 class="text-center">TRA CỨU THÔNG TIN</h4>
+            <hr>
             <div class="text-center">
                 <!-- start search check in, check out by date -->
                 <div class="col">
                     <form action="/search-date" method="POST">
                         <label for="searchDate">Chi tiết điểm danh theo ngày</label>
                         <input type="date" name="searchDate" id="searchDate">
+
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <button type="submit" class="btn btn-primary">Tìm</button>
                     </form>
                 </div>
@@ -34,17 +37,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (let check of checks) { %>
-                        <tr>
-                            <td><%= check.workPlace %></td>
-                            <td><%= moment(check.checkin).format('HH:mm') %></td>
-                            <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
-                            <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
-                        </tr>
+                        <% if (checks.length > 0) { %>
+                            <% for (let check of checks) { %>
+                                <tr>
+                                    <td><%= check.workPlace %></td>
+                                    <td><%= moment(check.checkin).format('HH:mm') %></td>
+                                    <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
+                                    <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
+                                </tr>
+                            <% } %>
+                                <tr>
+                                    <th colspan="5">Số giờ đã làm: <%= (isCheckout.length > 0) ? '--' : total.toFixed(2)  %> giờ</th>
+                                </tr>
+                        <% } else { %>
+                            <tr>
+                                <th colspan="5">Số giờ đã làm: <%= '--' %> giờ</th>
+                            </tr>
                         <% } %>
-                         <tr>
-                            <th colspan="5">Số giờ đã làm: <%= (isCheckout.length > 0) ? '--' : total.toFixed(2) %> giờ</th>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>

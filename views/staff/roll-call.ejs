@@ -1,0 +1,24 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main class="container text-center">
+        <div class="row">
+            <h3>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h3>
+            <hr>
+        </div>
+        <div class="m-2">
+                <a href="/check-in" class="btn btn-primary">Điểm danh</a>
+
+                <a href="/check-out" class="btn btn-primary">Kết thúc làm</a>
+
+                <a href="/check-details" class="btn btn-primary">Chi tiết điểm danh</a>
+
+                <a href="/annualLeave" class="btn btn-primary">Nghỉ phép</a>
+        </div>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    </main>
+
+<%- include('../includes/end.ejs') %>

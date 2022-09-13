@@ -1,91 +1,68 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/forms.css">
-    <link rel="stylesheet" href="/css/staff.css">
+    <link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
-   <%- include('../includes/navigation.ejs') %>
+   <%- include('../includes/navigationMana.ejs') %>
 
-    <main>
-        <div class="container">
-            <div class="row">
-                <h3 class="text-center">TRA CỨU THÔNG TIN</h3>
-                <hr>
-            </div>
-            <div class="row text-center">
-                <h5>Id quản lý: <%= user.managerId._id %></h5>
-                <h5>Tên quản lý: <%= user.managerId.name %></h5>
-            </div>
-            <div class="row justify-content-center">
-                <!-- start search salary -->
-                <div class="col">
-                    <form action="/search-salary" method="POST">
-                        <label for="salaryMonth">Chi tiết lương tháng</label>
-                        <input type="month" name="salaryMonth" id="salaryMonth">
+    <main class="container">
+        <div class="row text-center">
+            <h3>XÁC NHẬN GIỜ LÀM <%= user.name.toUpperCase() %></h3>
+            <hr>
+        </div>
+
+        <!-- start search salary -->
+            <div class="col">
+                <form action="/confirm-month" method="POST">
+                    <input type="hidden" name="userId" id="userId" value="<%= user._id %>">
+                    <label for="month">Chọn tháng</label>
+                    <input type="month" name="month" id="month">
                         
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                        <button type="submit" class="btn btn-primary">Tìm</button>
-                    </form>
-                </div>
-                <!-- end search salary -->
-
-                <!-- start search check in, check out by date -->
-                <div class="col">
-                    <form action="/search-date" method="POST">
-                        <label for="searchDate">Chi tiết điểm danh theo ngày</label>
-                        <input type="date" name="searchDate" id="searchDate">
-
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                        <button type="submit" class="btn btn-primary">Tìm</button>
-                    </form>
-                </div>
-                <!-- end search check in, check out by date -->
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                    <button type="submit" class="btn btn-primary">Tìm</button>
+                </form>
             </div>
-
-            <!-- start check in, check out table -->
+        <!-- end search salary -->
+        
+             <!-- start check in, check out table -->
             <div class="row mt-2">
                 <h5 class="text-center">THÔNG TIN ĐIỂM DANH</h5>
-                <div class="row text-center ">
-                    <form action="/search" method="POST">
-                        <label for="numRows">Số dòng hiển thị</label>
-                        <input class="m-3" name="numRows" type="radio" value="20">20
-                        <input class="m-3" name="numRows" type="radio" value="30">30
-                        <input class="m-3" name="numRows" type="radio" value="40">40
-
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                        <button class="btn btn-sm btn-primary m-2" type="submit">Hiển thị</button>
-                    </form>
-                    
-                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Ngày</th>
-                            <th>Nơi làm việc</th>
                             <th>Giờ bắt đầu</th>
                             <th>Giờ kết thúc</th>
+                            <th>Nơi làm việc</th>
                             <th>Thời gian làm việc</th>
+                            <th>Xóa giờ làm</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (let check of checkPag) { %>
-                        <tr>
+                        <% for (let check of user.checks) { %>
+                        <tr class="align-item-center">
                             <td><%= moment(check.checkin).format('DD/MM/YYYY') %></td>
-                            <td><%= check.workPlace %></td>
                             <td><%= moment(check.checkin).format('HH:mm') %></td>
                             <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
+                            <td><%= check.workPlace %></td>
                             <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
+                            <td>
+                                <form action="/delete-check" method="POST">
+                                    <input type="hidden" name="userId" value="<%= user._id %>">
+                                    <input type="hidden" id="checkDeleteId" name="checkDeleteId" value="<%= check._id %>">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                    <button class="btn btn-sm btn-danger" type="submit">Xóa</button>
+                                </form>
+                            </td>
                         </tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
             <!-- end check in, check out table -->
-
-            <!-- pagination -->
-            <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage}) %>
-
-            <!-- start annualLeave table -->
+        
+        <!-- start annualLeave table -->
             <div class="row">
                 <h5 class="text-center">THÔNG TIN NGHỈ PHÉP</h5>
                 <table class="table table-striped">
@@ -109,9 +86,9 @@
                     </tbody>
                 </table>
             </div>
-            <!-- end annualLeave table -->
+        <!-- end annualLeave table -->
 
-           <!-- start timeWork information table -->
+        <!-- start timeWork information table -->
             <div class="row">
                 <h5 class="text-center">THÔNG TIN GIỜ LÀM</h5>
                 <table class="table table-striped">
@@ -138,7 +115,5 @@
                 </table>
             </div>
             <!-- end timeWork information table -->
-
-        </div>
     </main>
 <%- include('../includes/end.ejs') %>

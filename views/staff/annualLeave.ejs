@@ -1,6 +1,22 @@
 <%- include('../includes/head.ejs') %>
  <link rel="stylesheet" href="/css/forms.css">
-    <link rel="stylesheet" href="/css/staff.css">
+<link rel="stylesheet" href="/css/staff.css">
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+ 
+    .ui-state-highlight {
+      border: 0 !important;
+    }
+ 
+    .ui-state-highlight a {
+      background: #363636 !important;
+      color: #fff !important;
+    }
+  </style>
+
 </head>
 
 <body>
@@ -20,30 +36,33 @@
                 <div class="row text-center">
                     <form action="/annualLeave" method="POST">
                         <div>
-                            <p>Chọn loại nghỉ phép:</p>
+                            <label for="typeLeave">Chọn loại nghỉ phép: </label>
                             <select name="typeLeave" id="typeLeave">
                                 <option value="Theo ngày">Theo ngày</option>
                                 <option value="Theo giờ">Theo giờ</option>
                             </select>
                         </div>
-                        <div class="m-2">
+                        <div class="mt-2">
                             <label for="dateLeave">Chọn ngày nghỉ</label>
-                            <input type="date" name="dateLeave">
-                            <button class="btn btn-primary btn-add" type="button" >Thêm</button>
-                            <div id="input"></div>
+                            <input type="text" name="dateLeave" id="dateLeave">
                         </div>
-                        <div>
+                        <div class="mt-2">
                             <label for="hourLeave">Chọn số giờ xin nghỉ phép</label>
                             <input type="number" name="hourLeave" min="0" max="<%= (user.annualLeave*8 < 8) ?user.annualLeave*8 : 8 %>">
                         </div>
-                        <div>
-                            <p>Lý do</p>
-                            <textarea name="reason" id="reason" cols="30" rows="5"></textarea>
+                        <div class="mt-2">
+                            <label for="reason" class="d-block">Lý do: </label>
+                            <textarea name="reason" id="reason" cols="30" rows="4"></textarea>
                         </div>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <button class="btn btn-primary" type="submit">Đăng ký</button>
                     </form>
                 </div>
-            <% } %>
+                <% } %>
+
+                <% if (errorMessage) { %>
+                    <div class="user-message user-message--error mt-2"><%= errorMessage %></div>
+                <% } %>
         </div>
     </main>
 

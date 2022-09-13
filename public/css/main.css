@@ -42,8 +42,10 @@ form {
 
 .main-header__nav {
   height: 100%;
-  display: none;
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .main-header__item-list {
@@ -56,6 +58,13 @@ form {
 .main-header__item {
   margin: 0 1rem;
   padding: 0;
+}
+
+.main-header__item button {
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: white;
 }
 
 .main-header__item a {
@@ -220,6 +229,42 @@ form {
   display: none;
 }
 
+.user-message {
+  margin: auto;
+  width: 90%;
+  border: 1px solid #4771fa;
+  padding: 0.5rem;
+  border-radius: 3px;
+  background: #b9c9ff;
+  text-align: center;
+}
+
+.user-message--error {
+  border-color: red;
+  background: rgb(255, 176, 176);
+  color: red;
+}
+
+.pagination {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #1b75eb;
+  padding: 0.5rem;
+  border: 1px solid #1b75eb;
+  margin: 0 1rem;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active {
+  background-color: #1b75eb;
+  color: white;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
@@ -227,5 +272,9 @@ form {
 
   #side-menu-toggle {
     display: none;
+  }
+
+  .user-message {
+    width: 30rem;
   }
 }

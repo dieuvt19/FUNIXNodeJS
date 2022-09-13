@@ -1,108 +1,55 @@
 const User = require("../models/user");
-const Check = require("../models/check");
-const AnnualLeave = require("../models/annualLeave");
-const Temp = require("../models/temp");
-const Vaccine = require("../models/vaccine");
-const Covid = require("../models/covid");
+const fileHelper = require("../util/file");
+
+const { validationResult } = require("express-validator");
 const { response } = require("express");
 
 const moment = require("moment");
 
-// Screen 1: Roll-call
-
-exports.getRollCall = (req, res, next) => {
-  res.render("staff/index", {
-    pageTitle: "Điểm danh",
-    path: "/",
-  });
-};
-
-exports.getCheckIn = (req, res, next) => {
-  Check.findOne({ starting: true })
-    .populate("userId", "name")
-    .then((check) => {
-      console.log(check);
-      if (check) {
-        res.render("staff/check-in", {
-          pageTitle: "Check in",
-          path: "/check-in",
-          check: check,
-          starting: true,
-          alert: "",
-        });
-      } else {
-        User.findById("630089076575b9df797c0f6a")
-          .then((user) => {
-            res.render("staff/check-in", {
-              pageTitle: "Check in",
-              path: "/check-in",
-              user: user,
-              starting: false,
-            });
-          })
-          .catch((err) => console.log(err));
-      }
+exports.getIndex = (req, res, next) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      return res.render("staff/index", {
+        pageTitle: "Trang chủ",
+        path: "/",
+        user: user,
+      });
     })
     .catch((err) => console.log(err));
 };
 
-exports.postCheckIn = (req, res, next) => {
-  Check.findOne({ starting: true })
-    .then((check) => {
-      if (check) {
-        return res.render("staff/check-in", {
-          pageTitle: "Check in",
-          check: check,
-          path: "/check-in",
-          starting: true,
-          alert: "Vui lòng kết thúc lần điểm danh trước đó!",
-        });
-      } else {
-        const workPlace = req.body.workPlace;
-        let checkin = new Date();
-        const check = new Check({
-          workPlace: workPlace,
-          checkin: checkin,
-          created: moment(checkin).format("YYYY-MM-DD"),
-          starting: true,
-          userId: req.user,
-        });
-        check
-          .save()
-          .then((check) => {
-            console.log(check);
-            console.log("Start work");
-            res.render("staff/check-in", {
-              pageTitle: "Check in",
-              path: "/check-in",
-              check: check,
-              starting: true,
-              alert: "Bạn đã điểm danh thành công!",
-            });
-          })
-          .catch((err) => console.log(err));
-      }
+// Screen 1: Roll-call
+
+exports.getRollCall = (req, res, next) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      return res.render("staff/roll-call", {
+        pageTitle: "Điểm danh",
+        path: "/roll-call",
+        user: user,
+      });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
-exports.getCheckOut = (req, res, next) => {
-  Check.findOne({ starting: true })
-    .then((check) => {
-      console.log(check);
-      if (check) {
-        res.render("staff/check-out", {
-          pageTitle: "Check out",
-          path: "/check-out",
-          check: check,
+exports.getCheckIn = (req, res, next) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (user.starting) {
+        res.render("staff/check-in", {
+          pageTitle: "Check in",
+          path: "/check-in",
+          user: user,
           starting: true,
+          alert: "",
         });
       } else {
-        res.render("staff/check-out", {
-          pageTitle: "Check out",
-          path: "/check-out",
+        res.render("staff/check-in", {
+          pageTitle: "Check in",
+          path: "/check-in",
+          user: user,
           starting: false,
         });
       }
@@ -110,18 +57,98 @@ exports.getCheckOut = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+exports.postCheckIn = (req, res, next) => {
+  const workPlace = req.body.workPlace;
+  let checkin = new Date();
+  const date = moment(checkin).format("YYYY-MM-DD");
+  const monthOfYear = moment(checkin).format("YYYY-MM");
+  const check = {
+    workPlace: workPlace,
+    checkin: checkin,
+    date: date,
+    starting: true,
+    monthOfYear: monthOfYear,
+  };
+  console.log(check);
+
+  const timeWorkPerDay = {
+    date: date,
+    monthOfYear: monthOfYear,
+  };
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      user.checks.push(check);
+
+      const dateCheck = user.timeWorkPerDay.filter(
+        (time) => time.date === date
+      );
+      console.log(dateCheck);
+      if (dateCheck.length <= 0) {
+        user.timeWorkPerDay.push(timeWorkPerDay);
+      }
+      user.starting = true;
+      user.save();
+
+      return res.render("staff/check-in", {
+        pageTitle: "Check in",
+        path: "/check-in",
+        user: user,
+        starting: true,
+        alert: "Bạn đã điểm danh thành công!",
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getCheckOut = (req, res, next) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      const checks = user.checks.filter((check) => check.starting === true);
+      console.log(checks);
+
+      return res.render("staff/check-out", {
+        pageTitle: "Check out",
+        path: "/check-out",
+        checks: checks,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
 exports.postCheckOut = (req, res, next) => {
   const checkId = req.body.checkId;
+  console.log(checkId);
   const checkout = new Date();
-  Check.findById(checkId)
-    .then((check) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      const check = user.checks.filter((check) => check.starting === true)[0];
       check.checkout = checkout;
       check.starting = false;
       check.timeWork = (
         moment(checkout).diff(moment(check.checkin), "minutes") / 60
       ).toFixed(2);
       console.log(check.timeWork);
-      check.save();
+
+      const dateIndex = user.timeWorkPerDay.findIndex((time) => {
+        return time.date === check.date;
+      });
+      if (dateIndex >= 0) {
+        const timeDay = user.timeWorkPerDay[dateIndex];
+        timeDay.workHours += check.timeWork;
+        timeDay.overTime =
+          timeDay.workHours + timeDay.leaveHours - 8 > 0
+            ? (timeDay.workHours + timeDay.leaveHours - 8).toFixed(2)
+            : 0;
+        timeDay.missingTime =
+          8 - timeDay.workHours - timeDay.leaveHours > 0
+            ? (8 - timeDay.workHours - timeDay.leaveHours).toFixed(2)
+            : 0;
+      }
+      user.starting = false;
+      user.save();
       res.redirect("/check-details");
     })
     .catch((err) => console.log(err));
@@ -129,8 +156,10 @@ exports.postCheckOut = (req, res, next) => {
 
 exports.getCheckDetails = (req, res, next) => {
   let today = moment(new Date()).format("YYYY-MM-DD");
-  Check.find({ checkin: { $gte: today } })
-    .then((checks) => {
+  User.findById(req.session.user._id)
+    .then((user) => {
+      // console.log(user);
+      const checks = user.checks.filter((check) => check.date === today);
       console.log(checks);
       const isCheckout = checks.filter((check) => check.starting === true);
       console.log(isCheckout);
@@ -155,50 +184,94 @@ exports.getCheckDetails = (req, res, next) => {
 
 // AnnualLeave
 exports.getAnnualLeave = (req, res, next) => {
-  User.findById("630089076575b9df797c0f6a").then((user) => {
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  User.findById(req.session.user._id).then((user) => {
     console.log(user);
     res.render("staff/annualLeave", {
       user: user,
       pageTitle: "Đăng ký nghỉ phép",
       path: "/annualLeave",
+      errorMessage: message,
     });
   });
 };
 
 exports.postAnnualLeave = (req, res, next) => {
   const typeLeave = req.body.typeLeave;
-  const dateLeave = req.body.dateLeave;
+  let dateLeaveInp = req.body.dateLeave;
   const hourLeave = req.body.hourLeave;
   const reason = req.body.reason;
-  const annualLeave = new AnnualLeave({
-    typeLeave: typeLeave,
-    dateLeave: dateLeave,
-    hourLeave: hourLeave,
-    reason: reason,
-    userId: req.user,
-  });
-  annualLeave
-    .save()
-    .then((anl) => {
-      console.log(anl);
-      console.log(annualLeave.dateLeave.length);
-      if (annualLeave.typeLeave === "Theo ngày") {
-        return req.user.countDateAnl(annualLeave.dateLeave.length);
+
+  console.log(dateLeaveInp);
+  const dateLeaveArr = dateLeaveInp.split(", ");
+  console.log(dateLeaveArr);
+
+  User.findById(req.session.user._id).then((user) => {
+    if (dateLeaveArr.length > user.annualLeave) {
+      req.flash("error", "Số ngày nghỉ còn lại không đủ!");
+      return res.redirect("/annualLeave");
+    }
+    for (let i = 0; i < dateLeaveArr.length; i++) {
+      const leaveInp = {
+        typeLeave: typeLeave,
+        dateLeave: dateLeaveArr[i],
+        reason: reason,
+        hourLeave: typeLeave === "Theo ngày" ? 8 : hourLeave,
+      };
+      user.leaves.push(leaveInp);
+
+      const dateIndex = user.timeWorkPerDay.findIndex(
+        (time) => time.date.toString() === dateLeaveArr[i].toString()
+      );
+      console.log(dateIndex);
+      if (dateIndex >= 0) {
+        const timeDay = user.timeWorkPerDay[dateIndex];
+        console.log(timeDay);
+        timeDay.leaveHours = typeLeave === "Theo ngày" ? 8 : hourLeave;
+        timeDay.overTime =
+          timeDay.workHours + timeDay.leaveHours - 8 > 0
+            ? (timeDay.workHours + timeDay.leaveHours - 8).toFixed(2)
+            : 0;
+        timeDay.missingTime =
+          8 - timeDay.workHours - timeDay.leaveHours > 0
+            ? (8 - timeDay.workHours - timeDay.leaveHours).toFixed(2)
+            : 0;
       } else {
-        return req.user.countDateAnl(hourLeave / 8);
+        const newtimeWorkPD = {
+          date: dateLeaveArr[i],
+          monthOfYear: moment(dateLeaveArr[i]).format("YYYY-MM"),
+          leaveHours: typeLeave === "Theo ngày" ? 8 : hourLeave,
+        };
+        user.timeWorkPerDay.push(newtimeWorkPD);
       }
-    })
-    .then((result) => {
-      console.log("Created annualLeave");
-      res.redirect("/annualLeave");
-    })
-    .catch((err) => console.log(err));
+    }
+    user
+      .save()
+      .then((user) => {
+        console.log(user);
+        if (typeLeave === "Theo ngày") {
+          return user.countDateAnl(dateLeaveArr.length);
+        } else {
+          return user.countDateAnl(hourLeave / 8);
+        }
+      })
+      .then((result) => {
+        console.log("Created annualLeave");
+        res.redirect("/annualLeave");
+      })
+      .catch((err) => console.log(err));
+  });
 };
 
 // Screen 2: information staff
 
 exports.getInfoStaff = (req, res, next) => {
-  User.findById("630089076575b9df797c0f6a")
+  User.findById(req.session.user._id)
     .then((user) => {
       console.log(user);
       res.render("staff/infoStaff", {
@@ -211,144 +284,209 @@ exports.getInfoStaff = (req, res, next) => {
 };
 
 exports.getEditInfoStaff = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
   const userId = req.params.staffId;
   console.log(userId);
   User.findById(userId)
     .then((user) => {
       console.log(user);
       res.render("staff/edit-infoStaff", {
-        user: user,
         pageTitle: "Xem/Sửa thông tin cá nhân",
         path: "/edit-infoStaff",
+        user: user,
+        errorMessage: null,
+        hasError: false,
+        validationErrors: [],
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postEditInfoStaff = (req, res, next) => {
   const userId = req.body.userId;
-  const updatedImage = req.body.image;
+  const updatedImage = req.file;
+  console.log(updatedImage);
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("staff/edit-infoStaff", {
+      pageTitle: "Xem/Sửa thông tin cá nhân",
+      path: "/edit-infoStaff",
+      hasError: true,
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
+    });
+  }
 
   User.findById(userId)
     .then((user) => {
-      user.image = updatedImage;
-      return user.save();
+      console.log(user);
+      if (user.id.toString() !== req.user._id.toString()) {
+        return res.redirect("/edit-infoStaff");
+      }
+      if (!updatedImage) {
+        return res.status(422).render("staff/edit-infoStaff", {
+          pageTitle: "Xem/Sửa thông tin cá nhân",
+          path: "/edit-infoStaff",
+          hasError: true,
+          user: user,
+          errorMessage: "Attached file is not an image.",
+          validationErrors: [],
+        });
+      }
+      if (updatedImage) {
+        fileHelper.deleteFile(user.image);
+        user.image = updatedImage.path;
+      }
+      return user.save().then((result) => {
+        console.log("UPDATED INFOMATION USER");
+        res.redirect("/infoStaff");
+      });
     })
-    .then((result) => {
-      console.log("UPDATED STAFF!");
-      res.redirect("/infoStaff");
-    })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 // Screen 3: Search
 
 exports.getSearch = (req, res, next) => {
-  User.findById("630089076575b9df797c0f6a")
-    .populate({ path: "checks" })
-    .populate({ path: "annualLeaves" })
-    .then((user) => {
-      Check.aggregate([
-        {
-          $group: {
-            _id: "$created",
-            countCheck: { $sum: 1 },
-            sumHour: { $sum: "$timeWork" },
-          },
-        },
-        { $sort: { _id: 1 } },
-      ])
-        .then((data) => {
-          console.log(data);
+  const numRows = req.body.numRows;
+  console.log(numRows);
+  const page = +req.query.page || 1;
+  let totalItems;
+  let itemsPerPage = 5;
+  if (numRows) {
+    itemsPerPage = parseInt(numRows);
+  }
 
-          res.render("staff/search", {
-            pageTitle: "Tra cứu",
-            path: "/search",
-            user: user,
-            data: data,
-          });
-        })
-        .catch((err) => console.log(err));
+  User.findById(req.session.user._id)
+    .populate("managerId", "name")
+    .then((user) => {
+      console.log(user);
+      totalItems = user.checks.length;
+      let start = (page - 1) * itemsPerPage;
+      let end = (page - 1) * itemsPerPage + itemsPerPage;
+      let checkPag = user.checks.slice(start, end);
+      console.log(user.timeWorkPerDay);
+      res.render("staff/search", {
+        pageTitle: "Tra cứu",
+        path: "/search",
+        user: user,
+        checkPag: checkPag,
+        times: user.timeWorkPerDay,
+        currentPage: page,
+        hasNextPage: itemsPerPage * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / itemsPerPage),
+      });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.postSearch = (req, res, next) => {
+  const numRows = req.body.numRows;
+  console.log(numRows);
+  const page = +req.query.page || 1;
+  let totalItems;
+  let itemsPerPage = parseInt(numRows);
+  console.log(itemsPerPage);
+
+  User.findById(req.session.user._id)
+    .then((user) => {
+      totalItems = user.checks.length;
+      // const skip = (page - 1) * ITEMS_PER_PAGE;
+      let start = (page - 1) * itemsPerPage;
+      let end = (page - 1) * itemsPerPage + itemsPerPage;
+      let checkPag = user.checks.slice(start, end);
+      console.log(user.timeWorkPerDay);
+      res.render("staff/search", {
+        pageTitle: "Tra cứu",
+        path: "/search",
+        user: user,
+        checkPag: checkPag,
+        times: user.timeWorkPerDay,
+        currentPage: page,
+        hasNextPage: itemsPerPage * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / itemsPerPage),
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 // Search salary
 exports.postSearchSalary = (req, res, next) => {
   const monthSearch = req.body.salaryMonth;
   console.log(monthSearch);
-  let start = monthSearch + "-01";
-  let end = monthSearch + "-31";
-
-  User.findById("630089076575b9df797c0f6a")
-    .populate({ path: "checks" })
-    .populate({ path: "annualLeaves" })
+  User.findById(req.session.user._id)
     .then((user) => {
-      Check.aggregate([
-        {
-          $match: { created: { $gte: start, $lte: end } },
-        },
-        {
-          $group: {
-            _id: "$created",
-            countCheck: { $sum: 1 },
-            sumHour: { $sum: "$timeWork" },
-          },
-        },
-        { $sort: { _id: 1 } },
-      ])
-        .then((checks) => {
-          console.log(checks);
-          // total working time
-          let totalTimeWork = 0;
-          checks.forEach((check) => {
-            return (totalTimeWork += check.sumHour);
-          });
-          console.log(totalTimeWork);
+      console.log(user);
+      const dayWorkPerMonth = user.timeWorkPerDay.filter(
+        (day) => day.monthOfYear.toString() === monthSearch.toString()
+      );
+      console.log(dayWorkPerMonth);
 
-          AnnualLeave.find({ dateLeave: { $gte: start, $lte: end } })
-            .then((anls) => {
-              console.log(anls);
+      if (dayWorkPerMonth.length > 0) {
+        // total working time
+        let totalOverTime = 0;
+        let totalMissingTime = 0;
 
-              // total AnnualLeave
-              let totalAnnualLeave = 0;
-              anls.forEach((anl) => {
-                if (anl.typeLeave === "Theo ngày") {
-                  anl.hourLeave = anl.dateLeave.length * 8;
-                }
-                return (totalAnnualLeave += anl.hourLeave);
-              });
-              console.log(totalAnnualLeave);
+        dayWorkPerMonth.forEach((day) => {
+          totalOverTime += day.overTime;
+          totalMissingTime += day.missingTime;
+        });
+        console.log(totalOverTime);
+        console.log(totalMissingTime);
+        const salary =
+          user.salaryScale * 3000000 +
+          (totalOverTime - totalMissingTime) * 200000;
 
-              // overtime
-              const overTime =
-                totalTimeWork > checks.length * 8
-                  ? totalTimeWork - checks.length * 8
-                  : 0;
-
-              // missingHours
-              const missingHours =
-                checks.length * 8 - totalAnnualLeave - totalTimeWork;
-
-              // salary
-              const salary =
-                user.salaryScale * 3000000 + (overTime - missingHours) * 200000;
-
-              res.render("staff/search-salary", {
-                pageTitle: "Tra cứu lương tháng",
-                path: "/search-salary",
-                monthSearch: monthSearch,
-                user: user,
-                checks: checks,
-                totalTimeWork: totalTimeWork,
-                missingHours: missingHours,
-                overTime: overTime,
-                salary: salary,
-              });
-            })
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
+        res.render("staff/search-salary", {
+          pageTitle: "Tra cứu lương theo tháng",
+          path: "/search-date",
+          user: user,
+          totalOverTime: totalOverTime,
+          totalMissingTime: totalMissingTime,
+          salary: salary,
+          monthSearch: monthSearch,
+        });
+      } else {
+        res.render("staff/search-salary", {
+          pageTitle: "Tra cứu lương theo tháng",
+          path: "/search-date",
+          user: user,
+          totalOverTime: 0,
+          totalMissingTime: 0,
+          salary: 0,
+          monthSearch: monthSearch,
+        });
+      }
     })
     .catch((err) => console.log(err));
 };
@@ -356,28 +494,42 @@ exports.postSearchSalary = (req, res, next) => {
 exports.postSearchDate = (req, res, next) => {
   const searchDate = req.body.searchDate;
   console.log(searchDate);
-  Check.find({ created: searchDate, userId: "630089076575b9df797c0f6a" })
-    .then((checks) => {
-      console.log(checks);
+  User.findById(req.session.user._id)
+    .then((user) => {
+      console.log(user);
+      const checkArr = user.checks.filter(
+        (check) => check.date.toString() === searchDate.toString()
+      );
+      console.log(checkArr);
 
-      const isCheckout = checks.filter((check) => check.starting === true);
-      console.log(isCheckout);
+      if (checkArr.length > 0) {
+        const isCheckout = checkArr.filter((check) => check.starting === true);
+        console.log(isCheckout);
 
-      let total = 0;
-      checks.forEach((check) => {
-        total += check.timeWork;
-        console.log(total);
-        return total;
-      });
+        let total = 0;
+        checkArr.forEach((check) => {
+          total += check.timeWork;
+          console.log(total);
+          return total;
+        });
 
-      res.render("staff/search-date", {
-        pageTitle: "Tra cứu điểm danh theo ngày",
-        path: "/search-date",
-        checks: checks,
-        total: total,
-        searchDate: searchDate,
-        isCheckout: isCheckout,
-      });
+        res.render("staff/search-date", {
+          pageTitle: "Tra cứu điểm danh theo ngày",
+          path: "/search-date",
+          checks: checkArr,
+          total: total,
+          searchDate: searchDate,
+          isCheckout: isCheckout,
+        });
+      } else {
+        res.render("staff/search-date", {
+          pageTitle: "Tra cứu điểm danh theo ngày",
+          path: "/search-date",
+          checks: [],
+          total: "",
+          searchDate: searchDate,
+        });
+      }
     })
     .catch((err) => console.log(err));
 };
@@ -387,6 +539,9 @@ exports.getInfoCovid = (req, res, next) => {
   res.render("staff/covid", {
     pageTitle: "Thông tin Covid",
     path: "/covid",
+    confirmTemp: "",
+    confirmVaccine: "",
+    confirmCovid: "",
   });
 };
 
@@ -394,30 +549,27 @@ exports.getInfoCovid = (req, res, next) => {
 exports.postTemp = (req, res, next) => {
   const bodyTemp = req.body.bodyTemp;
   const timeBodyTemp = new Date();
-  const temp = new Temp({
+  const temp = {
     bodyTemp: bodyTemp,
     timeBodyTemp: timeBodyTemp,
-    userId: req.user,
-  });
-  temp
-    .save()
-    .then((temps) => {
-      console.log(temps);
-      console.log("Created Temp");
-      res.redirect("/temp-details");
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.getTemp = (req, res, next) => {
-  Temp.find()
-    .then((temps) => {
-      console.log(temps);
-      res.render("staff/temp-details", {
-        pageTitle: "Thông tin thân nhiệt",
-        path: "/temp-details",
-        temps: temps,
-      });
+  };
+  User.findById(req.session.user._id)
+    .then((user) => {
+      user.bodyTemps.push(temp);
+      user
+        .save()
+        .then((user) => {
+          console.log(user);
+          console.log("Created Temp");
+          res.render("staff/covid", {
+            pageTitle: "Thông tin Covid",
+            path: "/covid",
+            confirmTemp: "Bạn đã đăng ký thông tin thân nhiệt thành công!",
+            confirmVaccine: "",
+            confirmCovid: "",
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -427,31 +579,28 @@ exports.postVaccine = (req, res, next) => {
   const typeVac = req.body.typeVac;
   const name = req.body.name;
   const date = req.body.date;
-  const vaccine = new Vaccine({
+  const vaccine = {
     type: typeVac,
     name: name,
     date: date,
-    userId: req.user,
-  });
-  vaccine
-    .save()
-    .then((vac) => {
-      console.log(vac);
-      console.log("Created Vaccine");
-      res.redirect("/vaccine-details");
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.getVaccine = (req, res, next) => {
-  Vaccine.find()
-    .then((vacs) => {
-      console.log(vacs);
-      res.render("staff/vaccine-details", {
-        pageTitle: "Thông tin tiêm Vaccine",
-        path: "/vaccine-details",
-        vacs: vacs,
-      });
+  };
+  User.findById(req.session.user._id)
+    .then((user) => {
+      user.vaccines.push(vaccine);
+      user
+        .save()
+        .then((user) => {
+          console.log(user);
+          console.log("Created Vaccine");
+          res.render("staff/covid", {
+            pageTitle: "Thông tin Covid",
+            path: "/covid",
+            confirmTemp: "",
+            confirmVaccine: "Bạn đã đăng ký thông tin tiêm vaccine thành công!",
+            confirmCovid: "",
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -459,29 +608,27 @@ exports.getVaccine = (req, res, next) => {
 // Covid
 exports.postCovid = (req, res, next) => {
   const dateCovid = req.body.dateCovid;
-  const covid = new Covid({
+  const covid = {
     dateCovid: dateCovid,
-    userId: req.user,
-  });
-  covid
-    .save()
-    .then((covid) => {
-      console.log(covid);
-      console.log("Created positive Covid");
-      res.redirect("/covid-details");
-    })
-    .catch((err) => console.log(err));
-};
-
-exports.getCovid = (req, res, next) => {
-  Covid.find()
-    .then((covids) => {
-      console.log(covids);
-      res.render("staff/covid-details", {
-        pageTitle: "Thông tin dương tính Covid",
-        path: "/covid-details",
-        covids: covids,
-      });
+  };
+  User.findById(req.session.user._id)
+    .then((user) => {
+      user.covids.push(covid);
+      user
+        .save()
+        .then((user) => {
+          console.log(user);
+          console.log("Created positive Covid");
+          res.render("staff/covid", {
+            pageTitle: "Thông tin Covid",
+            path: "/covid",
+            confirmTemp: "",
+            confirmVaccine: "",
+            confirmCovid:
+              "Bạn đã đăng ký thông tin dương tính Covid thành công!",
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };

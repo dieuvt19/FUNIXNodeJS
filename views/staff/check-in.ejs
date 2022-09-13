@@ -8,7 +8,8 @@
 
     <main class="container text-center">
         <div class="row">
-            <h4>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h4>
+            <h3>ĐIỂM DANH BẮT ĐẦU/KẾT THÚC CÔNG VIỆC</h3>
+            <hr>
         </div>
         <div class="m-2">
             <a href="/check-in" class="btn btn-primary">Điểm danh</a>
@@ -25,10 +26,10 @@
             </div>
             <% if (starting) { %> 
                 <div class="row">
-                     <h5>Xin chào: <%= check.userId.name %></h5>
+                     <h5>Xin chào: <%= user.name %></h5>
                     <h5>Trạng thái: Đang làm việc</h5>
-                    <p>Nơi làm việc: <%= check.workPlace %></p>
-                    <p>Thời gian bắt đầu làm: <%= moment(check.checkin).format('DD/MM/YYYY HH:mm') %></p>
+                    <p>Nơi làm việc: <%= user.checks[user.checks.length - 1].workPlace %></p>
+                    <p>Thời gian bắt đầu làm: <%= moment(user.checks[user.checks.length - 1].checkin).format('DD/MM/YYYY HH:mm') %></p>
                     <h6><%= alert %></h6>
                 </div>
             <% } else { %>
@@ -45,6 +46,7 @@
                             </select>
                         </div>
                     <div>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                         <button type="submit" class="btn btn-primary m-2">Bắt đầu</button>
                     </div>
                 </form>

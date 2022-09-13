@@ -1,3 +1,7 @@
+const { JSDOM } = require("jsdom");
+const { window } = new JSDOM("");
+const $ = require("jquery")(window);
+
 const backdrop = document.querySelector(".backdrop");
 const sideDrawer = document.querySelector(".mobile-nav");
 const menuToggle = document.querySelector("#side-menu-toggle");
