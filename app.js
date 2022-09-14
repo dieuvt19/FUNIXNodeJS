@@ -10,10 +10,6 @@ const flash = require("connect-flash");
 const multer = require("multer");
 const moment = require("moment");
 
-const { JSDOM } = require( "jsdom" );
-const { window } = new JSDOM( "" );
-const $ = require( "jquery" )( window );
-
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
@@ -109,8 +105,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(process.env.PORT || 8080, "0.0.0.0", () => {
-      console.log("Server is running.");
-    });
+    app.listen(3000);
   })
   .catch((err) => console.log(err));

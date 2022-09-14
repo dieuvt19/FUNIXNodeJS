@@ -6,11 +6,6 @@ const { response } = require("express");
 
 const moment = require("moment");
 
-const { JSDOM } = require( "jsdom" );
-const { window } = new JSDOM( "" );
-const $ = require( "jquery" )( window );
-
-
 exports.getIndex = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
@@ -208,12 +203,19 @@ exports.getAnnualLeave = (req, res, next) => {
 
 exports.postAnnualLeave = (req, res, next) => {
   const typeLeave = req.body.typeLeave;
-  let dateLeaveInp = req.body.dateLeave;
+  const dateLeaveInp = req.body.dateLeave;
   const hourLeave = req.body.hourLeave;
   const reason = req.body.reason;
+  let dateLeaveArr = [];
 
   console.log(dateLeaveInp);
-  const dateLeaveArr = dateLeaveInp.split(", ");
+  if (Array.isArray(dateLeaveInp)) {
+    const uniqueDate = new Set(dateLeaveInp);
+    dateLeaveArr = [...uniqueDate];
+  }
+  if (typeof dateLeaveInp === "string") {
+    dateLeaveArr.push(dateLeaveInp);
+  }
   console.log(dateLeaveArr);
 
   User.findById(req.session.user._id).then((user) => {
