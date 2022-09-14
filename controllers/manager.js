@@ -1,6 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
+const { JSDOM } = require( "jsdom" );
+const { window } = new JSDOM( "" );
+const $ = require( "jquery" )( window );
+
 const PDFDocument = require("pdfkit");
 const moment = require("moment");
 
