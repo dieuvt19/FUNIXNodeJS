@@ -221,6 +221,7 @@ exports.postAnnualLeave = (req, res, next) => {
         typeLeave: typeLeave,
         dateLeave: dateLeaveArr[i],
         reason: reason,
+        monthOfYear: moment(dateLeaveArr[i]).format("YYYY-MM"),
         hourLeave: typeLeave === "Theo ngày" ? 8 : hourLeave,
       };
       user.leaves.push(leaveInp);
