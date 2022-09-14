@@ -28,6 +28,7 @@
     "express-validator": "^6.14.2",
     "filehelper": "^1.0.5",
     "jquery": "^3.6.1",
+    "jquery-ui-multidatespicker": "^1.6.6",
     "jsdom": "^20.0.0",
     "moment": "^2.29.4",
     "mongodb": "^4.8.1",

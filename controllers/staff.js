@@ -10,6 +10,10 @@ const { JSDOM } = require( "jsdom" );
 const { window } = new JSDOM( "" );
 const $ = require( "jquery" )( window );
 
+ $(document).ready(function () {
+   $("#dateLeave").multiDatesPicker({ dateFormat: "yy-mm-dd" });
+ });
+
 exports.getIndex = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
