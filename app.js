@@ -10,9 +10,9 @@ const flash = require("connect-flash");
 const multer = require("multer");
 const moment = require("moment");
 
-const { JSDOM } = require("jsdom");
-const { window } = new JSDOM("");
-const $ = require("jquery")(window);
+// const { JSDOM } = require("jsdom");
+// const { window } = new JSDOM("");
+// const $ = require("jquery")(window);
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
