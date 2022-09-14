@@ -6,6 +6,10 @@ const { response } = require("express");
 
 const moment = require("moment");
 
+const { JSDOM } = require( "jsdom" );
+const { window } = new JSDOM( "" );
+const $ = require( "jquery" )( window );
+
 exports.getIndex = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
