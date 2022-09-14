@@ -12,7 +12,7 @@ const moment = require("moment");
 
 // const { JSDOM } = require("jsdom");
 // const { window } = new JSDOM("");
-const $ = require("jquery")
+const $ = require("jquery");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
