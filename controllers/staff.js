@@ -14,6 +14,12 @@ const moment = require("moment");
 exports.getIndex = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return res.render("staff/index", {
+          pageTitle: "Trang chủ",
+          path: "/",
+        });
+      }
       console.log(user);
       return res.render("staff/index", {
         pageTitle: "Trang chủ",
