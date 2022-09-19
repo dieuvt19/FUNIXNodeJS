@@ -39,6 +39,7 @@ const userSchema = new Schema({
       timeWork: { type: Number },
       starting: { type: Boolean },
       monthOfYear: { type: String },
+      confirm: { type: Boolean },
     },
   ],
   timeWorkPerDay: [

@@ -3,29 +3,72 @@ const express = require("express");
 const managerController = require("../controllers/manager");
 
 const isAuth = require("../middleware/is-auth");
-const isManager = require("../middleware/is-manager");
+const { authRole } = require("../middleware/is-manager");
+const { redirectPrePage } = require("../middleware/redirectPrePage");
 const { route } = require("./staff");
 
 const router = express.Router();
 
 router.get("/", isAuth, managerController.getIndex);
 
-router.get("/confirm-checks", isAuth, managerController.getConfirmChecks);
+router.get(
+  "/confirm-checks",
+  redirectPrePage("/confirm-checks"),
+  isAuth,
+  authRole("MANAGER"),
+  managerController.getConfirmChecks
+);
 
 router.get(
   "/confirm-checks/:staffId",
+  redirectPrePage("/confirm-checks/:staffId"),
   isAuth,
+  authRole("MANAGER"),
   managerController.getConfirmCheck
 );
 
-router.post("/delete-check", isAuth, managerController.postDeleteCheck);
+router.post(
+  "/confirm-check",
+  isAuth,
+  authRole("MANAGER"),
+  managerController.postConfirmCheck
+);
 
-router.post("/confirm-month", isAuth, managerController.postConfirmMonth);
+router.post(
+  "/delete-check",
+  isAuth,
+  authRole("MANAGER"),
+  managerController.postDeleteCheck
+);
 
-router.get("/manaCovid", isAuth, managerController.getManaCovid);
+router.post(
+  "/confirm-month",
+  isAuth,
+  authRole("MANAGER"),
+  managerController.postConfirmMonth
+);
 
-router.post("/staff-covid", isAuth, managerController.postStaffCovid);
+router.get(
+  "/manaCovid",
+  redirectPrePage("/manaCovid"),
+  isAuth,
+  authRole("MANAGER"),
+  managerController.getManaCovid
+);
 
-router.get("/staff-covid/:staffId", isAuth, managerController.getCoviPDF);
+router.post(
+  "/staff-covid",
+  isAuth,
+  authRole("MANAGER"),
+  managerController.postStaffCovid
+);
+
+router.get(
+  "/staff-covid/:staffId",
+  redirectPrePage("/staff-covid/:staffId"),
+  isAuth,
+  authRole("MANAGER"),
+  managerController.getCoviPDF
+);
 
 module.exports = router;

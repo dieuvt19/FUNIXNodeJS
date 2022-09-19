@@ -6,6 +6,11 @@ const { response } = require("express");
 
 const moment = require("moment");
 
+// if (typeof localStorage === "undefined" || localStorage === null) {
+//   var LocalStorage = require("node-localstorage").LocalStorage;
+//   localStorage = new LocalStorage("./scratch");
+// }
+
 exports.getIndex = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
@@ -25,6 +30,7 @@ exports.getRollCall = (req, res, next) => {
   User.findById(req.session.user._id)
     .then((user) => {
       console.log(user);
+      res.setHeader("Cookie", `urlPrePage=${req.path}`);
       return res.render("staff/roll-call", {
         pageTitle: "Điểm danh",
         path: "/roll-call",

@@ -26,6 +26,9 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
+  const redirectTo = req.session.redirectTo || "/";
+  console.log(redirectTo);
+  delete req.session.redirectTo;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -63,7 +66,7 @@ exports.postLogin = (req, res, next) => {
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
-              res.redirect("/");
+              res.redirect(redirectTo || "/");
             });
           }
           return res.status(422).render("auth/login", {
@@ -90,36 +93,4 @@ exports.postLogout = (req, res, next) => {
     console.log(err);
     res.redirect("/");
   });
-};
-
-exports.getSignup = (req, res, next) => {
-  res.render("auth/signup", {
-    path: "/signup",
-    pageTitle: "Đăng ký",
-  });
-};
-
-exports.postSignup = (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
-  console.log(username, password);
-  User.findOne({ username: username })
-    .then((userDoc) => {
-      if (userDoc) {
-        return res.redirect("/signup");
-      }
-      return bcrypt.hash(password, 12).then((hashedPassword) => {
-        const user = new User({
-          username: username,
-          password: hashedPassword,
-        });
-        return user.save();
-      });
-    })
-
-    .then((result) => {
-      res.redirect("/login");
-    })
-    .catch((err) => console.log(err));
 };

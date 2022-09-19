@@ -6,56 +6,154 @@ const staffController = require("../controllers/staff");
 const { randomBytes } = require("crypto");
 
 const isAuth = require("../middleware/is-auth");
+const { authRole } = require("../middleware/is-manager");
+const { redirectPrePage } = require("../middleware/redirectPrePage");
 
 const router = express.Router();
 
 router.get("/", isAuth, staffController.getIndex);
 
 // Route roll-call
-router.get("/roll-call", isAuth, staffController.getRollCall);
+router.get(
+  "/roll-call",
+  redirectPrePage("/roll-call"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getRollCall
+);
 
-router.get("/check-in", isAuth, staffController.getCheckIn);
+router.get(
+  "/check-in",
+  redirectPrePage("/check-in"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getCheckIn
+);
 
-router.post("/check-in", isAuth, staffController.postCheckIn);
+router.post(
+  "/check-in",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postCheckIn
+);
 
-router.get("/check-out", isAuth, staffController.getCheckOut);
+router.get(
+  "/check-out",
+  redirectPrePage("/check-out"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getCheckOut
+);
 
-router.post("/check-out", isAuth, staffController.postCheckOut);
+router.post(
+  "/check-out",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postCheckOut
+);
 
-router.get("/check-details", isAuth, staffController.getCheckDetails);
+router.get(
+  "/check-details",
+  redirectPrePage("/check-details"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getCheckDetails
+);
 
-router.get("/annualLeave", isAuth, staffController.getAnnualLeave);
+router.get(
+  "/annualLeave",
+  redirectPrePage("/annualLeave"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getAnnualLeave
+);
 
-router.post("/annualLeave", isAuth, staffController.postAnnualLeave);
+router.post(
+  "/annualLeave",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postAnnualLeave
+);
 
 // Route read/edit info-staff
-router.get("/infoStaff", isAuth, staffController.getInfoStaff);
+router.get(
+  "/infoStaff",
+  redirectPrePage("/infoStaff"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getInfoStaff
+);
 
 router.get(
   "/edit-infoStaff/:staffId",
+  redirectPrePage("/edit-infoStaff/:staffId"),
   isAuth,
   staffController.getEditInfoStaff
 );
 
-router.post("/edit-infoStaff", isAuth, staffController.postEditInfoStaff);
+router.post(
+  "/edit-infoStaff",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postEditInfoStaff
+);
 
 // Route search
 
-router.get("/search", isAuth, staffController.getSearch);
+router.get(
+  "/search",
+  redirectPrePage("/search"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getSearch
+);
 
-router.post("/search", isAuth, staffController.postSearch);
+router.post("/search", isAuth, authRole("STAFF"), staffController.postSearch);
 
-router.post("/search-salary", isAuth, staffController.postSearchSalary);
+router.post(
+  "/search-salary",
+  redirectPrePage("/search-salary"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.postSearchSalary
+);
 
-router.post("/search-date", isAuth, staffController.postSearchDate);
+router.post(
+  "/search-date",
+  redirectPrePage("/search-date"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.postSearchDate
+);
 
 // Covid
-router.get("/covid", isAuth, staffController.getInfoCovid);
+router.get(
+  "/covid",
+  redirectPrePage("/covid"),
+  isAuth,
+  authRole("STAFF"),
+  staffController.getInfoCovid
+);
 
-router.post("/temp-details", isAuth, staffController.postTemp);
+router.post(
+  "/temp-details",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postTemp
+);
 
-router.post("/vaccine-details", isAuth, staffController.postVaccine);
+router.post(
+  "/vaccine-details",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postVaccine
+);
 
-router.post("/covid-details", isAuth, staffController.postCovid);
+router.post(
+  "/covid-details",
+  isAuth,
+  authRole("STAFF"),
+  staffController.postCovid
+);
 
 module.exports = router;

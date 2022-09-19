@@ -281,3 +281,7 @@ form {
     width: 30rem;
   }
 }
+
+.hidden {
+  display: none;
+}

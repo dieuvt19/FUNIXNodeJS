@@ -102,11 +102,23 @@ app.use(managerRoutes);
 app.get("/500", errorController.get500);
 app.use(errorController.get404);
 
+//#region for app3000
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(process.env.PORT || 8080, "0.0.0.0", () => {
-      console.log("Server is running.");
-    });
+    app.listen(3000);
   })
   .catch((err) => console.log(err));
+//#endregion for app3000
+
+//#region for deploy heroku
+// mongoose
+//   .connect(MONGODB_URI)
+//   .then((result) => {
+//     app.listen(process.env.PORT || 8080, "0.0.0.0", () => {
+//       console.log("Server is running.");
+//     });
+//   })
+//   .catch((err) => console.log(err));
+
+//#endregion for deploy heroku

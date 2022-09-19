@@ -35,6 +35,7 @@
                             <th>Giờ kết thúc</th>
                             <th>Nơi làm việc</th>
                             <th>Thời gian làm việc</th>
+                            <th>Xác nhận giờ làm</th>
                             <th>Xóa giờ làm</th>
                         </tr>
                     </thead>
@@ -43,15 +44,32 @@
                         <tr class="align-item-center">
                             <td><%= moment(check.checkin).format('DD/MM/YYYY') %></td>
                             <td><%= moment(check.checkin).format('HH:mm') %></td>
-                            <td><%= (check.checkout != null) ? moment(check.checkout).format('HH:mm') : '--' %></td>
+                            <td><%= check.checkout ? moment(check.checkout).format('HH:mm') : '--' %></td>
                             <td><%= check.workPlace %></td>
-                            <td><%= (check.checkout != null) ? check.timeWork.toFixed(2) : '--' %></td>
-                            <td>
+                            <td><%= check.checkout ? check.timeWork.toFixed(2) : '--' %></td>
+                            <% if (!check.confirm) { %>
+                                <td>
+                                    <form action="/confirm-check" method="POST">
+                                        <input type="hidden" name="userId" value="<%= user._id %>">
+                                        <input type="hidden" id="confirnCheckId" name="confirnCheckId" value="<%= check._id %>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                        <div class="<%= check.checkout ? '' : 'hidden' %>">
+                                            <button class="btn btn-sm btn-success" type="submit">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            <% } else { %>
+                                <td>Đã xác nhận</td>
+                            <% } %>
+
+                            <td class="<%= !check.confirm ? '' : 'hidden' %>">
                                 <form action="/delete-check" method="POST">
                                     <input type="hidden" name="userId" value="<%= user._id %>">
                                     <input type="hidden" id="checkDeleteId" name="checkDeleteId" value="<%= check._id %>">
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-                                    <button class="btn btn-sm btn-danger" type="submit">Xóa</button>
+                                    <div class="<%= check.checkout ? '' : 'hidden' %>">
+                                        <button class="btn btn-sm btn-danger" type="submit">Xóa</button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>

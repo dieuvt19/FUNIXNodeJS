@@ -58,6 +58,27 @@ exports.getConfirmCheck = (req, res, next) => {
     });
 };
 
+exports.postConfirmCheck = (req, res, next) => {
+  const userId = req.body.userId;
+  console.log(userId);
+
+  const confirnCheckId = req.body.confirnCheckId;
+  console.log(confirnCheckId);
+  User.findById(userId)
+    .then((user) => {
+      const checkIndex = user.checks.findIndex(
+        (check) => check._id.toString() === confirnCheckId.toString()
+      );
+      console.log(checkIndex);
+      user.checks[checkIndex].confirm = true;
+      user.save();
+      const path = "/confirm-checks/" + userId;
+      console.log(path);
+      res.redirect(path);
+    })
+    .catch((err) => console.log(err));
+};
+
 exports.postDeleteCheck = (req, res, next) => {
   const userId = req.body.userId;
   console.log(userId);
