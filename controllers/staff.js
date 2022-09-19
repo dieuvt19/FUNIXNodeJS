@@ -12,7 +12,7 @@ const moment = require("moment");
 // }
 
 exports.getIndex = (req, res, next) => {
-  User.findById(req.session.user._id)
+  User.findById(req.session.user._id || "")
     .then((user) => {
       if (!user) {
         return res.render("staff/index", {
